@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bestiario WebAR - Quimera</title>
+    
+    <!-- Cargamos MindAR (la librería de reconocimiento) -->
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image.prod.js"></script>
+    
+    <!-- Cargamos A-Frame (para mostrar contenido 3D/video) -->
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    
+    <!-- Cargamos el conector entre MindAR y A-Frame -->
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+</head>
+<body>
+    <!-- La escena A-Frame con MindAR -->
+    <a-scene mindar-image="imageTargetSrc: quimera.mind;" 
+             color-space="sRGB" 
+             renderer="colorManagement: true, physicallyCorrectLights: false"
+             vr-mode-ui="enabled: false" 
+             device-orientation-permission-ui="enabled: false">
+        
+        <!-- La cámara -->
+        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+        
+        <!-- El "ancla" donde se reconoce la imagen -->
+        <a-entity mindar-image-target="targetIndex: 0">
+            
+            <!-- El video que aparecerá sobre la imagen -->
+            <!-- Ajusta position y scale según necesites -->
+            <a-video src="quimera-video.mp4" 
+                     position="0 0 0" 
+                     scale="1 1 1"
+                     autoplay="true"
+                     loop="true"
+                     muted="true"
+                     playsinline="true"
+                     webkit-playsinline="true">
+            </a-video>
+            
+        </a-entity>
+    </a-scene>
+</body>
+</html>

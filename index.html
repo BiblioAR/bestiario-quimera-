@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bestiario WebAR - Grecorromana (1-10)</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image.prod.js"></script>
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+</head>
+<body>
+    <!--
+      IMPORTANTE: "bestiario-grecorromana-1.mind" es el archivo que compilas TÚ
+      a partir de las 10 ilustraciones, en este orden exacto.
+    -->
+    <a-scene mindar-image="imageTargetSrc: bestiario-grecorromana-1.mind;"
+             color-space="sRGB"
+             renderer="colorManagement: true, physicallyCorrectLights: false"
+             vr-mode-ui="enabled: false"
+             device-orientation-permission-ui="enabled: false">
+
+        <!-- Los 10 videos, precargados, sin autoplay -->
+        <a-assets>
+            <video id="video-0" src="cerbero-video.mp4"     preload="auto" loop muted playsinline webkit-playsinline></video>
+            <video id="video-1" src="hidra-video.mp4"       preload="auto" loop muted playsinline webkit-playsinline></video>
+            <video id="video-2" src="medusa-video.mp4"      preload="auto" loop muted playsinline webkit-playsinline></video>
+            <video id="video-3" src="minotauro-video.mp4"   preload="auto" loop muted playsinline webkit-playsinline></video>
+            <video id="video-4" src="pegaso-video.mp4"      preload="auto" loop muted playsinline webkit-playsinline></video>
+            <video id="video-5" src="quimera-video.mp4"     preload="auto" loop muted playsinline webkit-playsinline></video>
+            <video id="video-6" src="esfinge-video.mp4"     preload="auto" loop muted playsinline webkit-playsinline></video>
+            <video id="video-7" src="parthenope-video.mp4"  preload="auto" loop muted playsinline webkit-playsinline></video>
+            <video id="video-8" src="aelo-video.mp4"        preload="auto" loop muted playsinline webkit-playsinline></video>
+            <video id="video-9" src="quiron-video.mp4"      preload="auto" loop muted playsinline webkit-playsinline></video>
+        </a-assets>
+
+        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+        <!-- 
+          LOS 10 TARGETS CON ESCALA CORREGIDA (3:4)
+          Se cambió scale="1 1 1" por scale="1 1.333 1" para compensar 
+          que el target es cuadrado (1:1) y el video es 3:4.
+        -->
+        <a-entity id="target-0" mindar-image-target="targetIndex: 0">
+            <a-video src="#video-0" position="0 0 0" scale="1 1.333 1"></a-video>
+        </a-entity>
+        <a-entity id="target-1" mindar-image-target="targetIndex: 1">
+            <a-video src="#video-1" position="0 0 0" scale="1 1.333 1"></a-video>
+        </a-entity>
+        <a-entity id="target-2" mindar-image-target="targetIndex: 2">
+            <a-video src="#video-2" position="0 0 0" scale="1 1.333 1"></a-video>
+        </a-entity>
+        <a-entity id="target-3" mindar-image-target="targetIndex: 3">
+            <a-video src="#video-3" position="0 0 0" scale="1 1.333 1"></a-video>
+        </a-entity>
+        <a-entity id="target-4" mindar-image-target="targetIndex: 4">
+            <a-video src="#video-4" position="0 0 0" scale="1 1.333 1"></a-video>
+        </a-entity>
+        <a-entity id="target-5" mindar-image-target="targetIndex: 5">
+            <a-video src="#video-5" position="0 0 0" scale="1 1.333 1"></a-video>
+        </a-entity>
+        <a-entity id="target-6" mindar-image-target="targetIndex: 6">
+            <a-video src="#video-6" position="0 0 0" scale="1 1.333 1"></a-video>
+        </a-entity>
+        <a-entity id="target-7" mindar-image-target="targetIndex: 7">
+            <a-video src="#video-7" position="0 0 0" scale="1 1.333 1"></a-video>
+        </a-entity>
+        <a-entity id="target-8" mindar-image-target="targetIndex: 8">
+            <a-video src="#video-8" position="0 0 0" scale="1 1.333 1"></a-video>
+        </a-entity>
+        <a-entity id="target-9" mindar-image-target="targetIndex: 9">
+            <a-video src="#video-9" position="0 0 0" scale="1 1.333 1"></a-video>
+        </a-entity>
+
+    </a-scene>
+
+    <script>
+        // Mismo comportamiento que el prototipo de la Quimera (play al reconocer, pausa al perder de vista),
+        // pero repetido automáticamente para las 10 criaturas en vez de copiar el bloque a mano 10 veces.
+        for (let i = 0; i < 10; i++) {
+            const videoEl = document.querySelector(`#video-${i}`);
+            const targetEntity = document.querySelector(`#target-${i}`);
+
+            targetEntity.addEventListener('targetFound', () => {
+                videoEl.currentTime = 0;
+                videoEl.muted = false;
+                videoEl.play();
+            });
+
+            targetEntity.addEventListener('targetLost', () => {
+                videoEl.pause();
+            });
+        }
+    </script>
+</body>
+</html>

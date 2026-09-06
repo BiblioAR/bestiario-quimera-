@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bestiario Vivo — Realidad Aumentada</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image.prod.js"></script>
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+</head>
+<body>
+    <!--
+      "bestiario-completo.mind" se compila a partir de las 100 ilustraciones,
+      EN EL ORDEN EXACTO del array "creatures" de abajo (ver también el archivo
+      de referencia con la lista completa de nombres y nombres de video).
+    -->
+    <a-scene id="scene" mindar-image="imageTargetSrc: bestiario-completo.mind;"
+             color-space="sRGB"
+             renderer="colorManagement: true, physicallyCorrectLights: false"
+             vr-mode-ui="enabled: false"
+             device-orientation-permission-ui="enabled: false">
+        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+    </a-scene>
+
+    <script>
+        // Orden EXACTO de compilación del .mind (índice 0 a 99).
+        // El nombre de cada video debe ser exactamente "<slug>-video.mp4".
+        const creatures = [
+            "cerbero","hidra","medusa","minotauro","pegaso","quimera","esfinge-tebas","parthenope","aelo","quiron",
+            "marsias","polifemo","escila","caribdis","tifon","equidna",
+            "fenrir","jormungandr","sleipnir","nidhoggr","huldra","draugr-glamr","garmr","huginn","ratatoskr",
+            "gran-esfinge","ammit","bennu","apofis","serket","wadjet","sobek","anubis",
+            "lamassu","anzu","simurgh","mushussu","humbaba","manticora","huma",
+            "leviatan","behemot","ziz",
+            "long-dragon","fenghuang","qilin","pixiu","huli-jing","nian","baihu","xuanwu","zhulong",
+            "tamamo-no-mae","danzaburo-danuki","sojobo","kappa","shuten-doji","yamata-no-orochi","nue","bakeneko","nekomata","baku",
+            "vasuki","garuda","makara","sharabha","kamadhenu","airavata",
+            "gamayun","domovoi","rusalka","leshy","zmey-gorynych","vodyanoy",
+            "anansi","grootslang","mokele-mbembe","aziza","adze",
+            "quetzalcoatl","camazotz","ahuizotl","xolotl","cadejo","amaru","chupacabras","alicanto",
+            "cu-sith","kelpie","puca","sluagh","kopakonan",
+            "dragon","unicornio","fenix","grifo","sirena","hombre-lobo","vampiro","basilisco"
+        ];
+
+        const scene = document.querySelector('#scene');
+
+        creatures.forEach((slug, i) => {
+            const entity = document.createElement('a-entity');
+            entity.setAttribute('mindar-image-target', `targetIndex: ${i}`);
+
+            const aVideo = document.createElement('a-video');
+            aVideo.setAttribute('position', '0 0 0');
+            aVideo.setAttribute('scale', '1 1.333 1'); // corrige el aplastamiento del target 1:1 de MindAR
+            entity.appendChild(aVideo);
+            scene.appendChild(entity);
+
+            let videoEl = null; // se crea solo la primera vez que se reconoce esta criatura
+
+            entity.addEventListener('targetFound', () => {
+                if (!videoEl) {
+                    // AQUÍ, y solo aquí, se descarga el archivo de video — nunca antes.
+                    videoEl = document.createElement('video');
+                    videoEl.id = `video-asset-${i}`;
+                    videoEl.src = `${slug}-video.mp4`;
+                    videoEl.loop = true;
+                    videoEl.muted = true;
+                    videoEl.playsInline = true;
+                    videoEl.setAttribute('webkit-playsinline', 'true');
+                    videoEl.setAttribute('preload', 'auto');
+                    videoEl.style.display = 'none';
+                    document.body.appendChild(videoEl);
+                    aVideo.setAttribute('src', `#${videoEl.id}`);
+                }
+                videoEl.currentTime = 0;
+                videoEl.muted = false;
+                videoEl.play();
+            });
+
+            entity.addEventListener('targetLost', () => {
+                if (videoEl) videoEl.pause();
+            });
+        });
+    </script>
+</body>
+</html>
